@@ -55,8 +55,7 @@ fun TodoItemRow(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { onTodoClick() },
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -70,7 +69,11 @@ fun TodoItemRow(
                 onCheckedChange = onCheckedChange
             )
             Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onTodoClick() }
+            ) {
                 Text(
                     text = todo.title,
                     style = MaterialTheme.typography.titleMedium,
