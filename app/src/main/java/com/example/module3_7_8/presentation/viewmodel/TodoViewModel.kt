@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.module3_7_8.data.local.TodoJsonDataSource
 import com.example.module3_7_8.data.repository.TodoRepositoryImpl
 import com.example.module3_7_8.domain.model.TodoItem
+import com.example.module3_7_8.domain.usecase.AddTodoUseCase
+import com.example.module3_7_8.domain.usecase.DeleteTodoUseCase
 import com.example.module3_7_8.domain.usecase.GetTodosUseCase
 import com.example.module3_7_8.domain.usecase.ToggleTodoUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +20,8 @@ class TodoViewModel(context: Context) : ViewModel() {
     private val repository = TodoRepositoryImpl(dataSource)
     private val getTodosUseCase = GetTodosUseCase(repository)
     private val toggleTodoUseCase = ToggleTodoUseCase(repository)
+    private val addTodoUseCase = AddTodoUseCase(repository)
+    private val deleteTodoUseCase = DeleteTodoUseCase(repository)
 
     private val _todos = MutableStateFlow<List<TodoItem>>(emptyList())
     val todos: StateFlow<List<TodoItem>> = _todos.asStateFlow()
@@ -35,6 +39,20 @@ class TodoViewModel(context: Context) : ViewModel() {
     fun toggleTodo(id: Int) {
         viewModelScope.launch {
             toggleTodoUseCase(id)
+            _todos.value = getTodosUseCase()
+        }
+    }
+
+    fun addTodo(title: String, description: String) {
+        viewModelScope.launch {
+            addTodoUseCase(title, description)
+            _todos.value = getTodosUseCase()
+        }
+    }
+
+    fun deleteTodo(id: Int) {
+        viewModelScope.launch {
+            deleteTodoUseCase(id)
             _todos.value = getTodosUseCase()
         }
     }

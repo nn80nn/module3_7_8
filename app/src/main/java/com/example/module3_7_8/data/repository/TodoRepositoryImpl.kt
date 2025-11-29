@@ -20,7 +20,7 @@ class TodoRepositoryImpl(
                 )
             }.toMutableList()
         }
-        return cachedTodos ?: emptyList()
+        return cachedTodos?.toList() ?: emptyList()
     }
 
     override suspend fun toggleTodo(id: Int) {
@@ -31,5 +31,25 @@ class TodoRepositoryImpl(
                 todos[index] = todo.copy(isCompleted = !todo.isCompleted)
             }
         }
+    }
+
+    override suspend fun addTodo(title: String, description: String) {
+        if (cachedTodos == null) {
+            getTodos()
+        }
+        cachedTodos?.let { todos ->
+            val newId = (todos.maxOfOrNull { it.id } ?: 0) + 1
+            val newTodo = TodoItem(
+                id = newId,
+                title = title,
+                description = description,
+                isCompleted = false
+            )
+            todos.add(newTodo)
+        }
+    }
+
+    override suspend fun deleteTodo(id: Int) {
+        cachedTodos?.removeAll { it.id == id }
     }
 }
